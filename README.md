@@ -1,7 +1,7 @@
 # thread practice
 This is the practice from Udemy class "Java Multithreading, Concurrency & Performance Optimization"
 
-### Synchronization Notes
+## Synchronization Notes
 
 object/variables shared by multiple method are stored on the heap and is not atomic (can be called by multiple method which would cause the status to be different)
 
@@ -11,7 +11,7 @@ In order to solve this problem, we could identify the code that we need to execu
   1. Simple way : add synchronized keyword in front of a method
   2. On an explict object: more flexible and granular, but also more verbose
 
-### Atomic Operations
+## Atomic Operations
 
 All reference assignments are atomic, so we can get and set references to objects atomically -> all getters and setters are atomic and we don't need to synchronize those
 
@@ -21,7 +21,7 @@ long and double are exceptions because they are 64-bits, so the lower 32-bits an
 Classes in java.util.concurrent.atomic have more advanced operations
 
 
-### Race Condition
+## Race Condition
 
 Condition when multiple threads are accessing a shared resource and at least one thread is modifying the resource. The timing of thread scheduling may cause incorrect results. The core of the problem is the atomic operations performed on shared resources
 
@@ -69,3 +69,12 @@ The reward of using reentrant lock:
                    High speed/low latency trading
                    User interface applications
     tryLock() could avoid blocking real time thread and keep application responsive while performing operations atomically and avoided race condition
+
+
+### ReentrantReadWriteLock
+
+Synchronized keyword and ReentrantLock both only allow one thread to access the shared resource at a time. However, when the majority of the operations are reading which is not modifying the shared resource, or when the read operations are not as fast (read from multiple variables or read from a complex data stucture), then mutual exclusion of reading threads negatively impacts the performance. 
+  Use readLock and writeLock and have mutual exclusion between readLock and writeLock
+    1. Use writeLock to lock the critical section where the shared resource is being modified. If writeLock is acquired, no thread can acquire a readLock
+    2. Use readLock to guard the critical section when it is being readed, multiple threads could access the readLock simultaneously. If at least one thread holds a 
+    readLock, then no thread can acquire writeLock
