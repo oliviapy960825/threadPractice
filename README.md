@@ -74,7 +74,10 @@ The reward of using reentrant lock:
 ### ReentrantReadWriteLock
 
 Synchronized keyword and ReentrantLock both only allow one thread to access the shared resource at a time. However, when the majority of the operations are reading which is not modifying the shared resource, or when the read operations are not as fast (read from multiple variables or read from a complex data stucture), then mutual exclusion of reading threads negatively impacts the performance. 
+
   Use readLock and writeLock and have mutual exclusion between readLock and writeLock
+  
     1. Use writeLock to lock the critical section where the shared resource is being modified. If writeLock is acquired, no thread can acquire a readLock
+    
     2. Use readLock to guard the critical section when it is being readed, multiple threads could access the readLock simultaneously. If at least one thread holds a 
     readLock, then no thread can acquire writeLock
