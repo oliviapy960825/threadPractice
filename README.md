@@ -40,3 +40,31 @@ Conditions for deadlock
   4. Circular wait - A chain of at least 2 threads each one is holding one resource and is waiting for another resource
 
 Deadlock is best solved by avoiding circular wait and hold by enforcing lock orders
+
+## Advanced Locking
+
+### Reentrant Lock
+
+Works just like the synchronized keyword applied on an object, but requires explicit locking and unlocking, so the disadvantage of using reentrant lock is that the user may forget to unlock after it's done -> solution : surround it with try catch and put unlock into final block, and every reentrant lock should be thoroughly tested. 
+
+The reward of using reentrant lock:
+  1. More control over the lock
+  2. More lock operations
+    Query methods - For testing
+      1. getQueuedThreads() -> return a list of threads waiting to acquire a lock
+      2. getOwner() -> Returns the thread that currently owns the lock
+      3. isHeldByCurrentThread() -> Queries if the lock is held by the current thread
+      4. isLocked() -> Queries if the lock is held by any thread
+  3. More control over lock's fairness -> by default, the reentrant lock and synchronized keyword do not guarantee any fairness
+    By setting the parameter to true when initializing reentrant lock (i.e., ReentrantLock(true)), fairness can be guaranteed. However, the downside is it may 
+    reduce the throughput of the application
+  4. LockInterruptibly() -> watchdog for deadlock detection and recovery. It would wake up and application to clean up and close the application
+  5. tryLock() -> boolean tryLock()
+                  boolean tryLock(long timeout, TimeUnit unit) 
+                    return true and acquires a lock if available
+                    return false and does not get suspended, if the lock is unavailable
+     Under no circumstances does the tryLock() method block. Regardless of the state of the lock, it always returns immediately
+          Used in real time applications where suspending a thread on a lock() method is unacceptable.
+              e.g. Video/Image processing
+                   High speed/low latency trading
+                   User interface applications
