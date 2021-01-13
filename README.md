@@ -68,3 +68,4 @@ The reward of using reentrant lock:
               e.g. Video/Image processing
                    High speed/low latency trading
                    User interface applications
+    tryLock() could avoid blocking real time thread and keep application responsive while performing operations atomically and avoided race condition
