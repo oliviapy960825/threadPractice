@@ -81,3 +81,47 @@ Synchronized keyword and ReentrantLock both only allow one thread to access the 
     
     2. Use readLock to guard the critical section when it is being readed, multiple threads could access the readLock simultaneously. If at least one thread holds a 
     readLock, then no thread can acquire writeLock
+
+## Inter-Thread Communication
+
+### Semaphore
+  1. Can be used to restrict the number of "users" to a particular resource or a group of resources
+  2. Unlike the locks that allow only one "user" per resource
+  3. The semaphore can restrict any given number of users to a resource
+  
+### Semaphore V.S. Locks
+
+  1. Semaphore does not have a notion of owner thread
+  2. Many threads can acquire a permit
+  3. The same thread can acquire the same semaphore multiple times
+  4. The binary semaphore (initialized with 1) is not reentrant
+  
+### Inter-thread - Condition.await()
+  Functions:
+    void await() -> unlock lock, wait until signalled
+    long awaitNanos(long nanosTimeout) -> wait no longer than nanosTimeout
+    boolean await(long time, TimeUnit unit) -> wait no longer than time, in given time units
+    boolean awaitUntil(Date deadline) -> wake up before the deadline date
+    void signal() -> wakes up a single thread, waiting on the condition variable
+                     A thread that wakes up has to reacquire the lock associated with the condition variable
+                     If currently no thread is waiting on the condition variable, the signal method does not do anything
+    void signalAll() -> Broadcast a signal to all threads currently waiting on the condition variable
+                        Does not need to know how many (if at all) threads are waiting on the condition variable 
+                        
+### wait(), notify() and notifyAll()
+  The Object Class contains the following methods:
+    public final void wait() throws InterruptedException
+    public final void notify()
+    public final void notifyAll()
+  Because every Java Class inherits from the Object Class, we can use any object as a condition variable and a lock (use the synchronized keyword)
+  
+    wait()
+      In the wait state, the thread is not consuming any CPU
+      Two ways to wake up the waiting thread:
+        notify() -> Wakes up a *single* thread waiting on that object
+        notifyAll() -> Wakes up *all* the threads waiting on that object
+      To call wait(), notify(), notifyAll(), we need to acquire the monitor of that object (use synchronized on that object)
+      
+### Rule of Thumb
+  
+  Whenever using a queue to decouple multithreaded components, apply back-pressure and limit the size of the queue to guard against OutOfMemoryException
