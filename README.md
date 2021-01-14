@@ -125,3 +125,62 @@ Synchronized keyword and ReentrantLock both only allow one thread to access the 
 ### Rule of Thumb
   
   Whenever using a queue to decouple multithreaded components, apply back-pressure and limit the size of the queue to guard against OutOfMemoryException
+
+
+## Disadvantages of Locks
+
+### Deadlocks
+
+  1. Deadlocks are generally unrecoverable
+  2. Can bring the application to a complete halt
+  3. The more locks in the application, the higher the chances for a deadlock
+  
+### Slow Critical Section
+  Multiple threads using the same lock -> One thread holds the lock for very long -> That thread will slow down all other threads -> All threads become as slow as the slowest thread
+  
+### Priority Inversion
+  Two threads share the same lock
+    low priority thread (document saver)
+    high priority thread (UI)
+  Low priority thread acquire the lock, and is preempted (scheduled out) -> high priority thread cannot progress because of the slow priority thread is not scheduled to release the lock
+  
+### Thread not releasing a lock (Kill Tolerance)
+  Thread dies, gets interrupted or forgets to release a lock -> Leaves all threads hanging forever -> unrecoverable, just like a deadlock -> To avoid, developers need to write very complex code
+  
+### Performance 
+  Performance overhead in having contention over a lock
+    Thread A acquire a lock
+    Thread B tries to acquire a lock and gets blocked
+    Thread B is scheduled out (context switch)
+    Thread B is scheduled back (context switch)
+  Application overhead may not be noticeable for most applications
+  But for latency sensitive applications, this overhead can be significant 
+  
+### AtomicX class
+  Class located in the java.util.concurrent.atomic package
+  Internally uses the Unsafe Class which provides access to low level, native methods
+  Utilize platform specific implementation of atomic operations
+  
+  AtomicInteger
+    Pros:
+      Simplicity
+      No need to for locks or synchronization
+      No race condition or data races
+    Cons:
+      Only the operation itself is atomic
+      There's still race condition between 2 separate atomic operations 
+      
+  AtomicReference<T>
+    AtomicReference (V initialValue)
+    V get() -> return the current value
+    void set(V newValue) -> Sets the value to newValue
+    boolean compareAndSet(V expectedValue, V newValue) -> Assign new value if current value == expected value, ignore the new value if the current value != expected value
+  
+  CAS - CompareAndSet
+    Available in all Atomic Class
+    Compiles into an atomic hardware operation
+    Many other atomic methods are internally implemented using CAS
+  
+  
+  
+  
